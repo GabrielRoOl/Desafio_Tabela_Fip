@@ -7,7 +7,9 @@ import br.com.tabela.TabelaFip.service.ConverteDados;
 
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Principal {
     Scanner sc = new Scanner(System.in);
@@ -17,6 +19,7 @@ public class Principal {
 
     private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
     private final String URL_MODELO = "/modelos/";
+    private final String URL_ANO = "/anos/";
 
     public void exibeMenu(){
         var menu = """
@@ -58,6 +61,27 @@ public class Principal {
         modeloLista.modelos().stream()
                 .sorted(Comparator.comparing(Dados::nome))
                 .forEach(System.out::println);
+
+        System.out.print("\nQual o nome do carro que deseja? ");
+
+        var nomeVeiculo = sc.nextLine();
+
+        List<Dados> modelosFiltrados = modeloLista.modelos().stream()
+                .filter(m -> m.nome().toLowerCase().contains(nomeVeiculo.toLowerCase()))
+                .collect(Collectors.toList());
+
+        System.out.println("\nModelos filtrados:\n--==--=--=--=--=--=--=--=--=--=--=--==--=--=--=--=--=--=--=--=--=--=\n");
+
+        modelosFiltrados.forEach(System.out::println);
+
+        System.out.print("\nTecle o código do modelo desejado: ");
+        var codigoModelo = sc.nextLine();
+
+        endereco = endereco + codigoModelo + URL_ANO;
+        json = consumo.obterDados(endereco);
+
+        List<Dados> anos = conversor.obterLista(json, Dados.class);
+
 
     }
 }
