@@ -2,10 +2,12 @@ package br.com.tabela.TabelaFip.principal;
 
 import br.com.tabela.TabelaFip.model.Dados;
 import br.com.tabela.TabelaFip.model.Modelos;
+import br.com.tabela.TabelaFip.model.Veiculo;
 import br.com.tabela.TabelaFip.service.ConsumoApi;
 import br.com.tabela.TabelaFip.service.ConverteDados;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
@@ -81,7 +83,16 @@ public class Principal {
         json = consumo.obterDados(endereco);
 
         List<Dados> anos = conversor.obterLista(json, Dados.class);
+        List<Veiculo> veiculos = new ArrayList<>();
 
+        for(int i = 0; i < anos.size(); i++){
+            var enderecoAnos = endereco + anos.get(i).codigo();
+            json = consumo.obterDados(enderecoAnos);
+            Veiculo veiculo = conversor.obterDados(json, Veiculo.class);
+            veiculos.add(veiculo);
+        }
 
+        System.out.println("\nTodos os veiculos filtrados com avaliações por ano:");
+        veiculos.forEach(System.out::println);
     }
 }
